@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="64" viewBox="0 0 220 64">
+  <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+    <stop offset="0" stop-color="#FDBA3C"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>
+  <g transform="translate(0,2)">
+    <path d="M40 4c11 3 16 10 17 20H15c1-10 6-17 17-20h8z" fill="url(#g)"/>
+    <rect x="12" y="24" width="56" height="5" rx="2.5" fill="#F59E0B"/>
+    <path d="M16 56V28h11l18 21V28h9v28h-11L27 40v16h-11z" fill="#F59E0B"/>
+    <path d="M16 56V28h11l18 21V28" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+  </g>
+  <text x="80" y="48" fill="#FFFFFF" font-size="26" font-weight="800" font-family="ui-sans-serif,Segoe UI,Inter">NEW TECH</text>
+</svg>

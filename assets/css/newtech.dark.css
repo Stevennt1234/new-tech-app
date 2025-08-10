@@ -1,0 +1,12 @@
+/* New Tech — Dark Theme extension */
+:root{
+  --nt-black:#FAFAFA;
+  --nt-white:#0E0E11;
+  --nt-orange:#F59E0B;
+  --nt-gray-200:#2A2A2E;
+}
+body{ background:var(--nt-white); color:var(--nt-black) }
+.nt-header{ background:#000; color:#fff }
+.card, .nt-search{ background:#121214; border-color:#2a2a2e }
+.nt-tab[aria-selected="true"]{ border-bottom-color:#fff }
+.btn{ border-color:#fff; color:#fff; background:#121214 }
