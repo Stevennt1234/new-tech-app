@@ -1,16 +1,17 @@
-import os, streamlit as st
-
-# Ensure API key is available for OpenAI client
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
-
+# app.py — New Tech HVAC AI Assistant (clean merged)
+# -------------------------------------------------
 import os
 import streamlit as st
 from chatgpt_helper import ask_chatgpt
 from superheat_assistant import calculate_superheat
 
+# 1) Page config FIRST
 st.set_page_config(page_title="New Tech HVAC AI Assistant", page_icon="🛠️", layout="centered")
 
-# ---------- CSS injection (supports either assets/css/newtech.css OR assets/newtech.css OR styles.css) ----------
+# 2) API key wiring (no hardcoding; pulls from env or Streamlit Secrets)
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
+
+# 3) Single CSS injector with sensible fallbacks
 def inject_first_existing(paths):
     for p in paths:
         if os.path.exists(p):
@@ -24,80 +25,81 @@ css_used = inject_first_existing([
     os.path.join("assets", "newtech.css"),
     "styles.css",
 ])
-
 if not css_used:
     st.warning("New Tech CSS not found. Expected assets/css/newtech.css (or assets/newtech.css).")
 
-# ---------- Header + banner (skip if graphics missing) ----------
-def file_exists(p): return os.path.exists(p)
+# 4) Header with logo
+LOGO = "assets/graphics/logo_newtech_hatN.svg"  # change to "assets/graphics/logo.svg" if that's your file
+col1, col2 = st.columns([1, 4])
+with col1:
+    if os.path.exists(LOGO):
+        st.image(LOGO, width=60)
+    else:
+        st.write("🔧")
+with col2:
+    st.markdown(
+        "<h1 style='margin-bottom:0;'>New Tech HVAC Assistant</h1>"
+        "<p style='color:gray;'>Powered by AI — Helping techs communicate and troubleshoot</p>",
+        unsafe_allow_html=True
+    )
 
-ICON_MENU   = os.path.join("assets", "graphics", "icon_menu.svg")
-ICON_GEAR   = os.path.join("assets", "graphics", "icon_gear.svg")
-ICON_HORN   = os.path.join("assets", "graphics", "icon_bullhorn.svg")
-LOGO_SVG    = os.path.join("assets", "graphics", "logo_newtech_hatN.svg")
+st.markdown("---")  # Divider
 
-has_graphics = all(map(file_exists, [ICON_MENU, ICON_GEAR, ICON_HORN, LOGO_SVG]))
+# 5) Ask an HVAC question
+st.subheader("Ask an HVAC question")
+user_question = st.text_input("Type your question (e.g., 'What does high subcooling mean?')", key="q_text")
 
-if has_graphics:
-    st.markdown(f"""
-<header class="nt-header">
-  <div class="nt-header__bar container">
-    <div class="nt-header__left">
-      <button class="nt-iconbtn"><img src="{ICON_MENU}" alt="Menu"></button>
-      <div class="nt-logo">
-        <img src="{LOGO_SVG}" height="36" alt="New Tech"/>
-        <span class="nt-title">NEW TECH</span>
-      </div>
-    </div>
-    <div class="nt-header__right">
-      <button class="nt-iconbtn"><img src="{ICON_GEAR}" alt="Settings"></button>
-    </div>
-  </div>
-  <div class="nt-banner">
-    <div class="nt-banner__wrap container">
-      <img class="nt-banner__icon" src="{ICON_HORN}" alt="Ad"/>
-      Advertise your HVAC brand here
-    </div>
-  </div>
-</header>
-""", unsafe_allow_html=True)
-else:
-    st.title("🛠️ New Tech HVAC AI Assistant")
-
-# ---------- Ask section ----------
-st.markdown('<section class="nt-hero container"><h1>Ask an HVAC question</h1></section>', unsafe_allow_html=True)
-
-user_question = st.text_input("Ask your HVAC question:")
-if st.button("Get Answer"):
-    if user_question.strip():
+answer = None
+if st.button("Get Answer", type="primary", use_container_width=True):
+    if user_question and user_question.strip():
         with st.spinner("Thinking..."):
             answer = ask_chatgpt(user_question.strip())
+        # stash for tabs below
+        st.session_state["last_answer"] = answer
         st.success(answer)
     else:
-        st.warning("Please type a question.")
+        st.warning("Please enter a question first.")
 
-# ---------- Tabs ----------
-tab_tech, tab_cust = st.tabs(["Technician", "Customer"])
+# 6) Technician / Customer tabs
+tech_tab, cust_tab = st.tabs(["Technician", "Customer"])
 
-with tab_tech:
+with tech_tab:
     st.markdown('<div class="section container"><div class="h2">Technical Answer</div></div>', unsafe_allow_html=True)
-    st.write("Your technical output will appear above once the Q&A runs.")
+    tech_ans = st.session_state.get("last_answer")
+    if tech_ans:
+        st.markdown(f'<div class="card">{tech_ans}</div>', unsafe_allow_html=True)
+    else:
+        st.info("Ask a question above to see the technical answer here.")
 
-with tab_cust:
+with cust_tab:
     st.markdown('<div class="section container"><div class="h2">Customer Answer</div></div>', unsafe_allow_html=True)
-    st.write("Customer‑friendly explanation will appear above once the Q&A runs.")
+    cust_ans = st.session_state.get("last_answer")
+    if cust_ans:
+        # For now we mirror the same text; later you can add a 'simplify for customer' transform
+        st.markdown(f'<div class="card">{cust_ans}</div>', unsafe_allow_html=True)
+    else:
+        st.info("Ask a question above to see a customer-friendly explanation here.")
 
-# ---------- HVAC Calculator ----------
-st.header("Superheat Calculator")
-try:
-    suction_temp = st.number_input("Suction Line Temp (°F)", value=50.0)
-    saturation_temp = st.number_input("Saturation Temp (°F)", value=40.0)
-    if st.button("Calculate Superheat"):
-        result = calculate_superheat(suction_temp, saturation_temp)
-        st.info(f"Superheat: {result} °F")
-except Exception as e:
-    st.error(f"Error: {e}")
+# 7) Superheat Calculator
+st.subheader("Superheat Calculator")
+with st.form("superheat_calc"):
+    c1, c2 = st.columns(2)
+    with c1:
+        suction_temp = st.number_input("Suction Line Temp (°F)", value=50.0, step=0.5)
+    with c2:
+        saturation_temp = st.number_input("Saturation Temp (°F)", value=40.0, step=0.5)
+    calc = st.form_submit_button("Calculate Superheat")
+    if calc:
+        try:
+            result = calculate_superheat(suction_temp, saturation_temp)
+            st.info(f"Superheat: {result} °F")
+        except Exception as e:
+            st.error(f"Calculation error: {e}")
 
-# ---------- Footer banner ----------
-if has_graphics:
-    st.markdown('<footer class="nt-footer"><div class="nt-footer__wrap container">Advertise your HVAC brand here</div></footer>', unsafe_allow_html=True)
+# 8) Footer banner
+st.markdown(
+    '<footer class="nt-footer">'
+    '<div class="nt-footer__wrap container">Advertise your HVAC brand here</div>'
+    '</footer>',
+    unsafe_allow_html=True
+)
