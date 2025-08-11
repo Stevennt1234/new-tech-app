@@ -1,3 +1,8 @@
+import os, streamlit as st
+
+# Ensure API key is available for OpenAI client
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY", "")
+
 import os
 import streamlit as st
 from chatgpt_helper import ask_chatgpt
