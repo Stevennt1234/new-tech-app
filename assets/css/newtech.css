@@ -5,6 +5,40 @@
    Reference: Mobile mockup with black header, orange ad banners, white content
    ========================================================================== */
 
+   /* =======================
+   FONT DECLARATIONS
+   ======================= */
+@font-face {
+  font-family: "NewTech Display";
+  src: url("../fonts/NewTechDisplay.woff2") format("woff2"),
+       url("../fonts/NewTechDisplay.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NewTech Sans";
+  src: url("../fonts/NewTechSans.woff2") format("woff2"),
+       url("../fonts/NewTechSans.woff") format("woff");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =======================
+   GLOBAL FONT USAGE
+   ======================= */
+body, p, li, input, textarea, button {
+  font-family: "NewTech Sans", "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: "NewTech Display", "NewTech Sans", "Inter", "Segoe UI", Arial, sans-serif;
+  font-weight: 700;
+}
+
+
 /* ----- Optional custom fonts (drop files into /assets/fonts and uncomment) ----- */
 /*
 @font-face {
@@ -26,123 +60,45 @@
 */
 
 :root{
-  --nt-black: #0B0B0D;
-  --nt-white: #FFFFFF;
-  --nt-orange: #F59E0B;
-  --nt-slate:  #1F2937;
-  --nt-gray-50:#F9FAFB;
-  --nt-gray-100:#F3F4F6;
-  --nt-gray-200:#E5E7EB;
-  --nt-gray-400:#9CA3AF;
-  --nt-shadow-1: 0 6px 24px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.06);
-  --nt-radius-lg: 16px;
-  --nt-radius-md: 12px;
-  --nt-radius-sm: 8px;
-  --nt-focus: 0 0 0 3px rgba(245,158,11,.45);
+  --nt-black:#0B0B0D; --nt-white:#FFF; --nt-orange:#F59E0B;
+  --nt-gray-200:#E5E7EB; --nt-gray-300:#D1D5DB; --nt-radius:14px;
 }
+*{box-sizing:border-box} body{margin:0;background:#fff;color:#0B0B0D;font-family:ui-sans-serif,system-ui,Segoe UI,Inter,Arial}
+.container{max-width:980px;margin:0 auto;padding:0 16px}
 
-/* Base reset */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  color:var(--nt-black);
-  background:var(--nt-white);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  line-height:1.35;
-}
-img{max-width:100%; height:auto; display:block}
-a{color:inherit; text-decoration:none}
-a:hover{text-decoration:underline}
-button{font:inherit}
+/* Header + banners */
+.nt-header{background:#0B0B0D;color:#fff}
+.nt-header__bar{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.nt-header__left{display:flex;align-items:center;gap:12px}
+.nt-header__right{margin-left:auto}
+.nt-iconbtn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.1);border:none}
+.nt-iconbtn img{width:22px;height:22px;filter:invert(1)}
+.nt-banner{background:var(--nt-orange);color:#0B0B0D}
+.nt-banner__wrap{display:flex;gap:10px;align-items:center;justify-content:center;padding:10px 16px;font-weight:800}
+.nt-banner__icon{width:20px;height:20px}
 
-/* Layout helpers */
-.container{max-width:980px; margin:0 auto; padding:0 16px}
-.stack-8 > * + *{margin-top:8px}
-.stack-12 > * + *{margin-top:12px}
-.stack-16 > * + *{margin-top:16px}
-.row{display:flex; gap:12px; align-items:center}
+/* Hero band */
+.nt-hero{background:#fff;border-bottom:1px solid var(--nt-gray-200);padding:18px 0}
+.nt-hero h1{margin:0;font-size:34px;font-weight:800}
 
-/* Header */
-.nt-header{position:sticky; top:0; z-index:40; background:var(--nt-black); color:var(--nt-white)}
-.nt-header__bar{display:flex; align-items:center; gap:12px; padding:12px 16px}
-.nt-header__left{display:flex; align-items:center; gap:12px}
-.nt-header__right{margin-left:auto; display:flex; gap:10px}
-.nt-title{font-weight:800; letter-spacing:.4px; font-size:18px}
-.nt-logo{display:flex; align-items:center; gap:10px}
-.nt-iconbtn{width:36px; height:36px; border-radius:10px; display:grid; place-items:center; background:rgba(255,255,255,.1)}
-.nt-iconbtn:focus{outline:none; box-shadow:var(--nt-focus)}
-.nt-iconbtn img{width:22px; height:22px; filter:invert(1)}
+/* Search pill */
+.nt-search{background:#fff;border:2px solid var(--nt-gray-300);border-radius:16px;display:flex;align-items:center;padding:10px 12px;gap:10px}
+.nt-search input{border:none;outline:none;flex:1;font-size:18px}
+.nt-search__btn{width:40px;height:40px;border-radius:12px;border:2px solid var(--nt-gray-300);background:#fff;display:grid;place-items:center}
 
-/* Banners (header + footer) */
-.nt-banner{background:var(--nt-orange); color:var(--nt-black);}
-.nt-banner__wrap{display:flex; align-items:center; gap:10px; padding:8px 16px; font-weight:800}
-.nt-banner__icon{flex:0 0 20px}
+/* Tabs like in mock */
+.stTabs [data-baseweb="tab-list"]{gap:40px;border-bottom:1px solid var(--nt-gray-200)}
+.stTabs [data-baseweb="tab"]{font-weight:800}
+.stTabs [aria-selected="true"]{border-bottom:3px solid #000}
 
-/* Page hero / “Ask an HVAC question” */
-.nt-hero{background:var(--nt-white); color:var(--nt-black); padding:16px; border-bottom:1px solid var(--nt-gray-200)}
-.nt-hero h1{margin:0 0 12px; font-size:26px; line-height:1.2; letter-spacing:.2px}
+/* Sections */
+.section{padding:18px 0}
+.h2{font-weight:800;font-size:28px;margin:0 0 6px}
+.card{background:#fff;border:1px solid var(--nt-gray-200);border-radius:var(--nt-radius);padding:14px}
 
-.nt-search{display:flex; align-items:center; gap:10px; background:#fff; border:1.5px solid var(--nt-gray-200); border-radius:14px; padding:10px 12px; box-shadow:var(--nt-shadow-1)}
-.nt-search input{flex:1; border:none; outline:none; font-size:16px; background:transparent}
-.nt-search__btn{width:40px; height:40px; border-radius:10px; border:1px solid var(--nt-gray-200); display:grid; place-items:center; background:#fff}
-.nt-search__btn:focus{outline:none; box-shadow:var(--nt-focus)}
+/* TTS chip */
+.nt-chip{border:2px solid var(--nt-gray-300);border-radius:12px;padding:6px 10px;font-weight:800;display:inline-block}
 
-/* Tabs (Technician / Customer) */
-.nt-tabs{display:flex; border-bottom:1px solid var(--nt-gray-200); background:#fff}
-.nt-tab{flex:1; text-align:center; font-weight:800; padding:12px 8px; cursor:pointer}
-.nt-tab[aria-selected="true"]{border-bottom:3px solid var(--nt-black)}
-
-/* Sections & cards */
-.section{padding:16px}
-.h2{font-size:20px; font-weight:800; margin:0 0 10px}
-.card{background:#fff; border:1px solid var(--nt-gray-200); border-radius:var(--nt-radius-lg); padding:14px; box-shadow:var(--nt-shadow-1)}
-
-/* Lists */
-.list{display:flex; flex-direction:column}
-.list__item{padding:12px 0; border-bottom:1px solid var(--nt-gray-200)}
-.list__item:last-child{border-bottom:none}
-
-/* Buttons / chips */
-.btn{border:1.5px solid var(--nt-black); background:#fff; color:var(--nt-black); padding:8px 12px; border-radius:10px; font-weight:700; cursor:pointer}
-.btn:focus{outline:none; box-shadow:var(--nt-focus)}
-.btn--primary{background:var(--nt-black); color:#fff}
-.btn--pill{border-radius:999px}
-.btn--tts{padding:6px 10px}
-
-/* Footer */
-.nt-footer{position:sticky; bottom:0; background:var(--nt-orange); color:var(--nt-black)}
-.nt-footer__wrap{padding:10px 16px; text-align:center; font-weight:800}
-
-/* Forms */
-label{font-weight:700}
-.input, .select, .textarea{
-  width:100%; border:1.5px solid var(--nt-gray-200); border-radius:12px; padding:10px 12px; font-size:16px; background:#fff
-}
-.textarea{min-height:96px; resize:vertical}
-.input:focus, .select:focus, .textarea:focus{outline:none; box-shadow:var(--nt-focus)}
-
-/* Utilities */
-.hidden{display:none !important}
-.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}
-.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}
-.p-8{padding:8px}.p-12{padding:12px}.p-16{padding:16px}
-
-/* Responsive */
-@media (min-width: 768px){
-  .nt-hero h1{font-size:28px}
-  .container{max-width:1100px}
-  .nt-search input{font-size:18px}
-}
-
-/* Dark mode option (if needed later) */
-@media (prefers-color-scheme: dark){
-  :root{ --nt-gray-200:#3f3f46; --nt-white:#0e0e11; --nt-black:#fafafa }
-  body{ background:var(--nt-white); color:var(--nt-black) }
-  .nt-header{ background:#000; color:#fff }
-  .card, .nt-search{ background:#121214; border-color:#2a2a2e }
-  .nt-tab[aria-selected="true"]{ border-bottom-color:#fff }
-  .btn{ border-color:#fff; color:#fff; background:#121214 }
-}
+/* Footer banner */
+.nt-footer{background:var(--nt-orange);color:#0B0B0D}
+.nt-footer__wrap{padding:12px 16px;text-align:center;font-weight:800}

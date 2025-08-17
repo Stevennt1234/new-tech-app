@@ -29,7 +29,7 @@ if not css_used:
     st.warning("New Tech CSS not found. Expected assets/css/newtech.css (or assets/newtech.css).")
 
 # 4) Header with logo
-LOGO = "assets/graphics/logo_newtech_hatN.svg"  # change to "assets/graphics/logo.svg" if that's your file
+LOGO = "assets/graphics/logo.png"  # <— your new logo file
 col1, col2 = st.columns([1, 4])
 with col1:
     if os.path.exists(LOGO):
