@@ -1,6 +1,7 @@
-# app.py — New Tech HVAC AI Assistant
-# -------------------------------------------------
+# app.py — New Tech HVAC AI Assistant (mockup-aligned, base64-safe images)
+# -----------------------------------------------------------------------
 import os
+import base64, mimetypes
 import streamlit as st
 from chatgpt_helper import ask_chatgpt
 from superheat_assistant import calculate_superheat
@@ -11,7 +12,7 @@ from superheat_assistant import calculate_superheat
 st.set_page_config(
     page_title="New Tech HVAC AI Assistant",
     page_icon="🛠️",
-    layout="centered"
+    layout="centered",
 )
 
 # -------------------------------------------------
@@ -39,23 +40,55 @@ if not css_used:
     st.warning("New Tech CSS not found. Expected assets/css/newtech.css (or assets/newtech.css).")
 
 # -------------------------------------------------
-# 4) Top header bar (menu left, gear right) + orange banner
+# 4) Image helper (embed as base64 data URIs to avoid path issues)
 # -------------------------------------------------
-HEADER_HTML = """
+def data_uri(path: str) -> str:
+    """Return a base64 data URI for any local image file; empty string if not found."""
+    if not os.path.exists(path):
+        return ""
+    mime, _ = mimetypes.guess_type(path)
+    with open(path, "rb") as f:
+        b64 = base64.b64encode(f.read()).decode("ascii")
+    return f"data:{mime or 'image/png'};base64,{b64}"
+
+# Expected graphics (case-sensitive on Streamlit Cloud)
+LOGO_PATH    = "assets/graphics/logo.png"
+MENU_SVG     = "assets/graphics/icon_menu.svg"
+GEAR_SVG     = "assets/graphics/icon_gear.svg"
+BULLHORN_SVG = "assets/graphics/icon_bullhorn.svg"
+MIC_SVG      = "assets/graphics/icon_mic.svg"
+
+logo_src     = data_uri(LOGO_PATH)
+menu_src     = data_uri(MENU_SVG)
+gear_src     = data_uri(GEAR_SVG)
+bullhorn_src = data_uri(BULLHORN_SVG)
+mic_src      = data_uri(MIC_SVG)
+
+missing = [p for p,s in [
+    (LOGO_PATH,logo_src),(MENU_SVG,menu_src),(GEAR_SVG,gear_src),
+    (BULLHORN_SVG,bullhorn_src),(MIC_SVG,mic_src)
+] if not s]
+if missing:
+    st.warning("Missing image files: " + ", ".join(missing))
+
+# -------------------------------------------------
+# 5) Top header bar (menu left, gear right) + orange banner
+# -------------------------------------------------
+HEADER_HTML = f"""
 <header class="nt-header">
   <div class="nt-header__bar container">
     <button class="nt-iconbtn" title="Menu">
-      <img src="assets/graphics/icon_menu.svg" alt="Menu">
+      <img src="{menu_src}" alt="Menu">
     </button>
     <div style="margin-left:auto">
       <button class="nt-iconbtn" title="Settings">
-        <img src="assets/graphics/icon_gear.svg" alt="Settings">
+        <img src="{gear_src}" alt="Settings">
       </button>
     </div>
   </div>
   <div class="nt-banner">
     <div class="nt-banner__wrap container">
-      <img class="nt-banner__icon" src="assets/graphics/icon_bullhorn.svg" alt="Ad"/>
+      <img class="nt-banner__icon" src="{bullhorn_src}" alt="Ad"/>
       Advertise your HVAC brand here
     </div>
   </div>
@@ -64,36 +97,23 @@ HEADER_HTML = """
 st.markdown(HEADER_HTML, unsafe_allow_html=True)
 
 # -------------------------------------------------
-# 5) Centered logo hero (hat-N logo + NEW TECH wordmark)
+# 6) Centered logo hero (hat-N logo + NEW TECH wordmark)
 # -------------------------------------------------
-LOGO = "assets/graphics/logo.png"  # ensure this file exists
-if os.path.exists(LOGO):
-    st.markdown(
-        f"""
-        <div class="nt-logo-hero">
-            <img src="{LOGO}" alt="New Tech Logo"/>
-            <h1 class="nt-wordmark">NEW TECH</h1>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-else:
-    st.markdown(
-        """
-        <div class="nt-logo-hero">
-            <div style="font-size:48px">🔧</div>
-            <h1 class="nt-wordmark">NEW TECH</h1>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+st.markdown(
+    f"""
+    <div class="nt-logo-hero">
+        {'<img src="'+logo_src+'" alt="New Tech Logo"/>' if logo_src else '<div style="font-size:48px">🔧</div>'}
+        <h1 class="nt-wordmark">NEW TECH</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # -------------------------------------------------
-# 6) Ask an HVAC Question — headline band + search pill
+# 7) Ask an HVAC Question — headline band + search pill
 # -------------------------------------------------
 st.markdown('<section class="nt-hero container"><h1>Ask an HVAC question</h1></section>', unsafe_allow_html=True)
 
-# Search pill layout: text input + mic icon + send button
 with st.container():
     st.markdown('<div class="container">', unsafe_allow_html=True)
     c1, c2, c3 = st.columns([8, 1, 1])
@@ -102,14 +122,11 @@ with st.container():
             "", placeholder="e.g, normal subcooling for R-410A?", label_visibility="collapsed", key="q_text"
         )
     with c2:
-        # Visual mic icon (placeholder — no action wired yet)
-        st.markdown('<div class="nt-pillbtn"><img src="assets/graphics/icon_mic.svg" alt="Mic"/></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="nt-pillbtn"><img src="{mic_src}" alt="Mic"/></div>', unsafe_allow_html=True)
     with c3:
-        # Real Streamlit button (styled by CSS override below)
-        send_clicked = st.button("", key="send_btn")
+        send_clicked = st.button("", key="send_btn")  # styled by CSS override below
         st.markdown(
-            # This styles the default Streamlit button to look like a plain pill icon button
-            '<style>div[data-testid="baseButton-secondary"] button{background:#fff;border:2px solid #D1D5DB;border-radius:12px;height:44px}</style>',
+            '<style>div[data-testid="baseButton-secondary"] button{{background:#fff;border:2px solid #D1D5DB;border-radius:12px;height:44px}}</style>',
             unsafe_allow_html=True
         )
     st.markdown('</div>', unsafe_allow_html=True)
@@ -121,7 +138,7 @@ if send_clicked and user_question and user_question.strip():
     st.session_state["last_answer"] = answer
 
 # -------------------------------------------------
-# 7) Tabs: Technician / Customer
+# 8) Tabs: Technician / Customer + Recent list
 # -------------------------------------------------
 tech_tab, cust_tab = st.tabs(["Technician", "Customer"])
 
@@ -139,18 +156,17 @@ with cust_tab:
     cust_ans = st.session_state.get("last_answer")
     st.markdown(f'<div class="card">{cust_ans or ""}</div>', unsafe_allow_html=True)
 
-# Recent list (exact wording like mockup)
+# Recent (exact wording from mockup)
 st.markdown('<div class="section container"><div class="h2">Recent</div></div>', unsafe_allow_html=True)
-recent_items = [
+for txt in [
     "It's the normal for air conditioning to have much subcooling in heat mode?",
     "What is the purpose of an equalizer tube?",
     "Why does an A/C unit freeze up?",
-]
-for txt in recent_items:
+]:
     st.markdown(f'<div class="container" style="padding:12px 0;border-bottom:1px solid #E5E7EB">{txt}</div>', unsafe_allow_html=True)
 
 # -------------------------------------------------
-# 8) Superheat Calculator
+# 9) Superheat Calculator
 # -------------------------------------------------
 st.subheader("Superheat Calculator")
 with st.form("superheat_calc"):
@@ -168,7 +184,7 @@ with st.form("superheat_calc"):
             st.error(f"Calculation error: {e}")
 
 # -------------------------------------------------
-# 9) Footer ad banner
+# 10) Footer ad banner
 # -------------------------------------------------
 st.markdown(
     '<footer class="nt-footer">'
